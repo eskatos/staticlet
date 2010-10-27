@@ -85,10 +85,8 @@ TODO
 ----
 
  * Split
- * - three separates projects with a small build-pom.xml where versions are handled by hand
- * - http-handler
+ * - two separates projects with a small build-pom.xml where versions are handled by hand
  * - staticlet (staticlet-parent)
- *   - staticlet-http
  *   - staticlet-core
  *   - staticlet-classic
  *   - staticlet-testsupport
