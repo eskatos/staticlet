@@ -51,21 +51,21 @@ public class FileRepresenter
     }
 
     private static final String MULTIPART_BOUNDARY = "MULTIPART_BYTERANGES";
+    private final StaticletConfiguration configuration;
     private final Logger logger;
     private final StaticRequest staticRequest;
     private final IOService io;
-    private final int bufferSize;
     private ByteRange fullRange;
     private boolean acceptsGzip;
     private String contentType;
     private String disposition = "inline";
 
-    FileRepresenter( Logger logger, IOService io, StaticRequest staticRequest, int bufferSize )
+    FileRepresenter( StaticletConfiguration configuration, Logger logger, IOService io, StaticRequest staticRequest )
     {
+        this.configuration = configuration;
         this.logger = logger;
         this.io = io;
         this.staticRequest = staticRequest;
-        this.bufferSize = bufferSize;
     }
 
     void represent()
@@ -156,7 +156,7 @@ public class FileRepresenter
     private void handleAcceptHeaders()
     {
         // Get content type by file name and set default GZIP support and content disposition.
-        contentType = staticRequest.servletContext.getMimeType( staticRequest.fileName );
+        contentType = io.getMimeType( staticRequest.fileName );
 
         // If content type is unknown, then set the default value.
         // For all content types, see: http://www.w3schools.com/media/media_mimeref.asp
@@ -185,14 +185,14 @@ public class FileRepresenter
     {
         // Initialize response.
         staticRequest.httpResponse.reset();
-        staticRequest.httpResponse.setBufferSize( bufferSize );
+        staticRequest.httpResponse.setBufferSize( configuration.getBufferSize() );
         if ( staticRequest.protocol == HttpVersion.HTTP_1_1 ) {
             staticRequest.httpResponse.setHeader( HttpHeaders.CONTENT_DISPOSITION, disposition + ";filename=\"" + staticRequest.fileName + "\"" );
             staticRequest.httpResponse.setHeader( HttpHeaders.ACCEPT_RANGES, "bytes" );
             staticRequest.httpResponse.setHeader( HttpHeaders.ETAG, staticRequest.entityTag );
         }
         staticRequest.httpResponse.setDateHeader( HttpHeaders.LAST_MODIFIED, staticRequest.lastModified );
-        staticRequest.httpResponse.setDateHeader( HttpHeaders.EXPIRES, System.currentTimeMillis() + StaticRequest.DEFAULT_EXPIRE_TIME );
+        staticRequest.httpResponse.setDateHeader( HttpHeaders.EXPIRES, System.currentTimeMillis() + configuration.getExpireTime() );
     }
 
     private void sendRequestedFileParts( List<ByteRange> ranges )
@@ -233,12 +233,12 @@ public class FileRepresenter
             if ( staticRequest.writeBody ) {
                 if ( acceptsGzip ) {
                     staticRequest.httpResponse.setHeader( HttpHeaders.CONTENT_ENCODING, "gzip" );
-                    output = new GZIPOutputStream( output, bufferSize );
+                    output = new GZIPOutputStream( output, configuration.getBufferSize() );
                 } else {
                     staticRequest.httpResponse.setHeader( HttpHeaders.CONTENT_LENGTH, String.valueOf( range.length ) );
                 }
                 // Copy full range.
-                io.copy( input, output, range.start, range.length, bufferSize );
+                io.copy( input, output, range.start, range.length, configuration.getBufferSize() );
             }
 
         } finally {
@@ -263,7 +263,7 @@ public class FileRepresenter
             staticRequest.httpResponse.setStatus( HttpServletResponse.SC_PARTIAL_CONTENT ); // 206.
             if ( staticRequest.writeBody ) {
                 // Copy single part range of multi part range.
-                io.copy( input, output, range.start, range.length, bufferSize );
+                io.copy( input, output, range.start, range.length, configuration.getBufferSize() );
             }
 
         } finally {
@@ -295,7 +295,7 @@ public class FileRepresenter
                     sos.println( HttpHeaders.CONTENT_TYPE + ": " + contentType );
                     sos.println( HttpHeaders.CONTENT_RANGE + ": bytes " + eachRange.start + "-" + eachRange.end + "/" + eachRange.total );
                     // Copy single part range of multi part range.
-                    io.copy( input, output, eachRange.start, eachRange.length, bufferSize );
+                    io.copy( input, output, eachRange.start, eachRange.length, configuration.getBufferSize() );
                 }
                 // End with multipart boundary.
                 sos.println();

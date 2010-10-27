@@ -13,6 +13,7 @@
  */
 package org.qi4j.library.staticlet;
 
+import org.qi4j.api.common.Optional;
 import org.qi4j.api.common.UseDefaults;
 import org.qi4j.api.configuration.ConfigurationComposite;
 import org.qi4j.api.property.Property;
@@ -25,5 +26,11 @@ public interface StaticletConfiguration
 
     @UseDefaults
     Property<Boolean> directoryListing();
+
+    @Optional
+    Property<Integer> bufferSize();
+
+    @Optional
+    Property<Long> expireTime();
 
 }

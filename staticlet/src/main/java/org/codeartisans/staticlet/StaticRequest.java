@@ -17,7 +17,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -32,19 +31,15 @@ import org.slf4j.Logger;
 public class StaticRequest
 {
 
-    static final long DEFAULT_EXPIRE_TIME = 604800000L; // ..ms = 1 week.
     // Configuration
-    private final Boolean directoryListing;
-    private final String docRoot;
+    private final StaticletConfiguration configuration;
     // Context
     private final IOService io;
     private final ETagger entityTagger;
     private final Logger logger;
-    final ServletContext servletContext;
     final HttpServletRequest httpRequest;
     final HttpServletResponse httpResponse;
     final boolean writeBody;
-    final int bufferSize;
     // Data
     String uri;
     String pathInfo;
@@ -54,21 +49,18 @@ public class StaticRequest
     String fileName;
     HttpVersion protocol;
 
-    StaticRequest( Boolean directoryListing, String docRoot,
-                   IOService io, ETagger entityTagger, Logger logger, ServletContext servletContext,
+    StaticRequest( StaticletConfiguration configuration,
+                   Logger logger, IOService io, ETagger entityTagger,
                    HttpServletRequest httpRequest, HttpServletResponse httpResponse,
-                   boolean writeBody, int bufferSize )
+                   boolean writeBody )
     {
-        this.directoryListing = directoryListing;
-        this.docRoot = docRoot;
+        this.configuration = configuration;
         this.io = io;
         this.entityTagger = entityTagger;
         this.logger = logger;
-        this.servletContext = servletContext;
         this.httpRequest = httpRequest;
         this.httpResponse = httpResponse;
         this.writeBody = writeBody;
-        this.bufferSize = bufferSize;
     }
 
     @SuppressWarnings( "LocalVariableHidesMemberVariable" )
@@ -92,7 +84,7 @@ public class StaticRequest
             requestPathInfo = "/";
         }
 
-        File file = new File( docRoot, URLDecoder.decode( requestPathInfo, "UTF-8" ) );
+        File file = new File( configuration.getDocRoot(), URLDecoder.decode( requestPathInfo, "UTF-8" ) );
         if ( file.getName().startsWith( "." ) ) {
             logger.debug( "Requested path {}, leads to a hidden file {}, have'nt checked if it exists, 404", requestPathInfo, file );
             throw new EarlyHttpStatusException( HttpServletResponse.SC_NOT_FOUND, "Requested path does not exists" );
@@ -303,7 +295,7 @@ public class StaticRequest
 
             // Directory request -----------------------------------------------------------------------------------
 
-            if ( !directoryListing ) {
+            if ( !configuration.isDirectoryListing() ) {
                 throw new EarlyHttpStatusException( HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized" );
             }
             new DirectoryRepresenter( logger, this ).represent();
@@ -312,7 +304,7 @@ public class StaticRequest
 
             // File request ----------------------------------------------------------------------------------------
 
-            new FileRepresenter( logger, io, this, bufferSize ).represent();
+            new FileRepresenter( configuration, logger, io, this ).represent();
 
         }
     }

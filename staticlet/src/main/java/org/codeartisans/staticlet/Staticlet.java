@@ -17,13 +17,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 import java.util.UUID;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.codeartisans.staticlet.http.etag.ETagger;
-import org.codeartisans.staticlet.util.FileSystemRequestLogger;
+import org.codeartisans.staticlet.util.RequestLogger;
 import org.codeartisans.staticlet.http.etag.HexMD5ETagger;
 import org.codeartisans.staticlet.util.IOService;
 
@@ -39,34 +40,48 @@ public class Staticlet
 
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = LoggerFactory.getLogger( Staticlet.class );
-    private static final int DEFAULT_BUFFER_SIZE = 10240; // ..bytes = 10KB.
-    private String docRoot;
-    private boolean directoryListing;
+    private StaticletConfiguration configuration;
 
     @Override
     public void init()
             throws ServletException
     {
-        initStaticlet( getInitParameter( "docRoot" ), Boolean.valueOf( getInitParameter( "directoryListing" ) ) );
+        String docRootString = getInitParameter( "docRoot" );
+        String directoryListingString = getInitParameter( "directoryListing" );
+        String bufferSizeString = getInitParameter( "bufferSize" );
+        String expireTimeString = getInitParameter( "expireTime" );
+        boolean bufferSizePresent = bufferSizeString != null && bufferSizeString.length() > 0;
+        boolean expireTimePresent = expireTimeString != null && expireTimeString.length() > 0;
+        initStaticlet( docRootString,
+                       Boolean.valueOf( directoryListingString ),
+                       bufferSizePresent ? Integer.parseInt( bufferSizeString ) : null,
+                       expireTimePresent ? Long.parseLong( expireTimeString ) : null );
     }
 
-    protected final void initStaticlet( String docRoot, Boolean directoryListing )
+    protected final void initStaticlet( String docRoot, Boolean directoryListing, Integer bufferSize, Long expireTime )
             throws ServletException
     {
-        if ( docRoot == null ) {
+        if ( docRoot == null || docRoot.length() <= 0 ) {
             throw new ServletException( "docRoot is required" );
-        } else {
-            File path = new File( docRoot );
-            if ( !path.exists() ) {
-                throw new ServletException( "'" + docRoot + "' does not exist" );
-            } else if ( !path.isDirectory() ) {
-                throw new ServletException( "'" + docRoot + "' is not a directory" );
-            } else if ( !path.canRead() ) {
-                throw new ServletException( "'" + docRoot + "' is not readable" );
-            }
         }
-        this.docRoot = docRoot;
-        this.directoryListing = directoryListing == null ? false : directoryListing;
+        File path = new File( docRoot );
+        if ( !path.exists() ) {
+            throw new ServletException( "'" + docRoot + "' does not exist" );
+        } else if ( !path.isDirectory() ) {
+            throw new ServletException( "'" + docRoot + "' is not a directory" );
+        } else if ( !path.canRead() ) {
+            throw new ServletException( "'" + docRoot + "' is not readable" );
+        }
+        if ( directoryListing == null ) {
+            directoryListing = Boolean.FALSE;
+        }
+        if ( bufferSize == null ) {
+            bufferSize = 10240; // ..bytes = 10KB.
+        }
+        if ( expireTime == null ) {
+            expireTime = 604800000L; // ..ms = 1 week.
+        }
+        configuration = new StaticletConfiguration( docRoot, directoryListing, bufferSize, expireTime );
     }
 
     @Override
@@ -93,18 +108,19 @@ public class Staticlet
             throws IOException
     {
 
-        Logger logger = new FileSystemRequestLogger( LOGGER, UUID.randomUUID().toString() );
+        Logger logger = new RequestLogger( LOGGER, UUID.randomUUID().toString() );
 
         try {
 
             // Set up FileSystemRequest and its dependencies -----------------------------------------------------------
 
-            IOService io = new IOService( logger );
+            ServletContext servletContext = getServletContext();
+            IOService io = new IOService( servletContext, logger );
             ETagger eTagger = new HexMD5ETagger( logger, io );
-            StaticRequest fsRequest = new StaticRequest( directoryListing, docRoot,
-                                                         io, eTagger, logger, getServletContext(),
+            StaticRequest fsRequest = new StaticRequest( configuration,
+                                                         logger, io, eTagger,
                                                          httpRequest, httpResponse,
-                                                         writeBody, DEFAULT_BUFFER_SIZE );
+                                                         writeBody );
 
 
             // Interaction ---------------------------------------------------------------------------------------------

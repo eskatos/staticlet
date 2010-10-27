@@ -16,14 +16,14 @@ package org.codeartisans.staticlet.util;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
 
-public class FileSystemRequestLogger
+public class RequestLogger
         implements Logger
 {
 
     private final Logger log;
     private final CharSequence prefix;
 
-    public FileSystemRequestLogger( Logger delegate, CharSequence requestId )
+    public RequestLogger( Logger delegate, CharSequence requestId )
     {
         this.log = delegate;
         this.prefix = new StringBuilder().append( requestId ).append( " " ).toString();

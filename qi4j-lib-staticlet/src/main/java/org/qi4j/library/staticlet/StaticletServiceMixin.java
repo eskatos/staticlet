@@ -41,7 +41,7 @@ public class StaticletServiceMixin
             directoryListing = true;
         }
 
-        initStaticlet( docRoot, directoryListing );
+        initStaticlet( docRoot, directoryListing, null, null );
     }
 
 }

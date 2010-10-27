@@ -11,10 +11,10 @@ Features
 --------
 
 - Full HTTP/1.0 (strict) and HTTP/1.1 conditional GET & HEAD support
-- Full HTTP/1.1 ranges support (mostly as in the Bauke implementation, thanks dude)
+- Full HTTP/1.1 ranges support (mostly as in the BalusC FileServlet, thanks dude)
 - Only one dependency: slf4j
 - The code is easy to read
-- Practical logging: 99% is debug/trace with debug level meaning HTTP protocol debugging
+- Practical logging: 99% is debug/trace with debug level meaning HTTP protocol level and trace meaning code level
 - Pluggable ETag generation, one cheap and one hex md5 implementations are provided
 
 - Hide files starting with a '.'
@@ -84,13 +84,12 @@ issues using staticlet, don't hesitate to create a github issue here.
 TODO
 ----
 
- * Split
- * - two separates projects with a small build-pom.xml where versions are handled by hand
- * - staticlet (staticlet-parent)
+ * Projects
+ * - Split staticlet in submodules:
  *   - staticlet-core
  *   - staticlet-classic
  *   - staticlet-testsupport
- * - qi4j-lib-staticlet
+ * - Make qi4j-lib-staticlet depends on staticlet-core
  * Unit tests
  * - implements tests for HTTP/1.0 & HTTP/1.1
  * - rebuild staticlet-docroot.zip with random data so we can make byte level comparisons in client for ranges
@@ -112,5 +111,7 @@ TODO
  *    - in memory: store in a Map<TimeStamp,Path>, ttl
  *    - on disk: path, ttl, emptyOnStart
  * - provide a way to empty cache at runtime (file presence and lastModified polling ?)
-
+ * Qi4j
+ * - see why Configuration defaults values at assembly don't work
+ * - provide two ways to configure: web.xml or qi4j configuration
 

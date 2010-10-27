@@ -17,19 +17,25 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
-
-import org.codeartisans.staticlet.StaticRequest;
+import javax.servlet.ServletContext;
 
 import org.slf4j.Logger;
 
 public class IOService
 {
 
+    private final ServletContext servletContext;
     private final Logger logger;
 
-    public IOService( Logger logger )
+    public IOService( ServletContext servletContext, Logger logger )
     {
+        this.servletContext = servletContext;
         this.logger = logger;
+    }
+
+    public String getMimeType( String filename )
+    {
+        return servletContext.getMimeType( filename );
     }
 
     public void close( Closeable resource )
