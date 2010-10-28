@@ -32,7 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A servlet implementing GET & HEAD for HTTP/1.0 & HTTP/1.1 on top of a filesystem.
+ * Base class for Staticlet servlets.
  */
 public abstract class AbstractStaticlet
         extends HttpServlet
@@ -50,7 +50,8 @@ public abstract class AbstractStaticlet
 
     /**
      * By default the org.codeartisans.staticlet.core logger is used for
-     * requests logging. You can override this method to provide a logger of your choice.
+     * requests logging. You can override this method to provide a logger
+     * of your choice.
      *
      * @return The Logger to use for requests logging
      */
@@ -69,7 +70,20 @@ public abstract class AbstractStaticlet
     {
         beforeInit();
         super.init();
-        StaticletConfiguration config = getConfiguration();
+        validateConfiguration( getConfiguration() );
+        afterInit();
+    }
+
+    /**
+     * Test values in given StaticletConfiguration and set the configuration
+     * field with a copy if it validates.
+     *
+     * @param config The configuration to validate
+     * @throws ServletException if the configuration does not validates
+     */
+    private void validateConfiguration( StaticletConfiguration config )
+            throws ServletException
+    {
         String docRoot = config.getDocRoot();
         if ( docRoot == null || docRoot.length() <= 0 ) {
             throw new ServletException( "docRoot is required" );
@@ -95,7 +109,6 @@ public abstract class AbstractStaticlet
             expireTime = 604800000L; // ..ms = 1 week.
         }
         this.configuration = new StaticletConfiguration( docRoot, directoryListing, bufferSize, expireTime );
-        afterInit();
     }
 
     /**
