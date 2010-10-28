@@ -11,7 +11,7 @@
  * limitations under the License.
  *
  */
-package org.codeartisans.staticlet.http.etag;
+package org.codeartisans.staticlet.core.http.etag;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -22,7 +22,7 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import org.codeartisans.staticlet.util.IOService;
+import org.codeartisans.staticlet.core.util.IOService;
 
 import org.slf4j.Logger;
 

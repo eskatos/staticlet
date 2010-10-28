@@ -11,7 +11,7 @@
  * limitations under the License.
  *
  */
-package org.codeartisans.staticlet.http;
+package org.codeartisans.staticlet.core.http;
 
 public interface HttpHeaders
 {

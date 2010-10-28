@@ -14,23 +14,36 @@
 package org.qi4j.library.staticlet;
 
 import java.io.File;
-import javax.servlet.ServletException;
 
-import org.codeartisans.staticlet.Staticlet;
+import org.codeartisans.staticlet.core.AbstractStaticlet;
 
 import org.qi4j.api.injection.scope.This;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class StaticletServiceMixin
-        extends Staticlet
+        extends AbstractStaticlet
 {
 
     private static final long serialVersionUID = 1L;
+    private static final Logger LOGGER = LoggerFactory.getLogger( StaticletServiceMixin.class );
     @This
     private StaticletConfiguration configuration;
 
+    public StaticletServiceMixin()
+    {
+        super();
+    }
+
     @Override
-    public void init()
-            throws ServletException
+    protected Logger getLogger()
+    {
+        return LOGGER;
+    }
+
+    @Override
+    protected org.codeartisans.staticlet.core.StaticletConfiguration getConfiguration()
     {
         String docRoot = configuration.docRoot().get();
         Boolean directoryListing = configuration.directoryListing().get();
@@ -43,7 +56,7 @@ public class StaticletServiceMixin
             directoryListing = true;
         }
 
-        initStaticlet( docRoot, directoryListing, bufferSize, expireTime );
+        return new org.codeartisans.staticlet.core.StaticletConfiguration( docRoot, directoryListing, bufferSize, expireTime );
     }
 
 }

@@ -1,1 +1,6 @@
 target
+staticlet/target
+staticlet/core/target
+staticlet/testsupport/target
+staticlet/classic/target
+qi4j-lib-staticlet/target

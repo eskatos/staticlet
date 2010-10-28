@@ -11,7 +11,7 @@
  * limitations under the License.
  *
  */
-package org.codeartisans.staticlet.util;
+package org.codeartisans.staticlet.core.util;
 
 import org.slf4j.Logger;
 import org.slf4j.Marker;

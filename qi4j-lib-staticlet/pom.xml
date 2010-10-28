@@ -42,7 +42,7 @@
 
         <dependency>
             <groupId>org.codeartisans.staticlet</groupId>
-            <artifactId>staticlet</artifactId>
+            <artifactId>staticlet-core</artifactId>
             <version>${version.staticlet}</version>
         </dependency>
 

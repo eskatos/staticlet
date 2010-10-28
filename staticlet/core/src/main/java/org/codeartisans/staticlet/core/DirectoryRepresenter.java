@@ -11,7 +11,7 @@
  * limitations under the License.
  *
  */
-package org.codeartisans.staticlet;
+package org.codeartisans.staticlet.core;
 
 import java.io.File;
 import java.io.IOException;

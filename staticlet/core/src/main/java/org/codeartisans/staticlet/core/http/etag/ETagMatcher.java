@@ -11,7 +11,7 @@
  * limitations under the License.
  *
  */
-package org.codeartisans.staticlet.http.etag;
+package org.codeartisans.staticlet.core.http.etag;
 
 import java.util.Arrays;
 

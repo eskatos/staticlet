@@ -11,27 +11,28 @@
  * limitations under the License.
  *
  */
-package org.codeartisans.staticlet;
+package org.codeartisans.staticlet.core.http.etag;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.File;
 
 /**
- * Raised to abort the request interaction returning only a status and some headers.
+ * Produces ETag with "name + length + lastModified" for files, "name + lastModified" for directories.
  */
-public class EarlyHttpStatusException
-        extends Exception
+public class SimpleETagger
+        extends AbstractETagger
+        implements ETagger
 {
 
-    private static final long serialVersionUID = 1L;
-    final String reason;
-    final int status;
-    final Map<String, String> headers = new HashMap<String, String>();
-
-    public EarlyHttpStatusException( int status, String reason )
+    @Override
+    protected String eTagOfFile( File file )
     {
-        this.status = status;
-        this.reason = reason;
+        return file.getName() + "__" + file.length() + "__" + file.lastModified();
+    }
+
+    @Override
+    protected String eTagOfDirectory( File directory )
+    {
+        return directory.getName() + "__" + directory.lastModified();
     }
 
 }

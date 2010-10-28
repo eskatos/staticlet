@@ -11,7 +11,7 @@
  * limitations under the License.
  *
  */
-package org.codeartisans.staticlet;
+package org.codeartisans.staticlet.core;
 
 public class StaticletConfiguration
 {
@@ -34,17 +34,17 @@ public class StaticletConfiguration
         return docRoot;
     }
 
-    public boolean isDirectoryListing()
+    public Boolean isDirectoryListing()
     {
         return directoryListing;
     }
 
-    public int getBufferSize()
+    public Integer getBufferSize()
     {
         return bufferSize;
     }
 
-    public long getExpireTime()
+    public Long getExpireTime()
     {
         return expireTime;
     }

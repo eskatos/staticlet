@@ -11,12 +11,12 @@
  * limitations under the License.
  *
  */
-package org.codeartisans.staticlet.http;
+package org.codeartisans.staticlet.core.http;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.codeartisans.staticlet.EarlyHttpStatusException;
+import org.codeartisans.staticlet.core.EarlyHttpStatusException;
 
 public enum HttpVersion
 {

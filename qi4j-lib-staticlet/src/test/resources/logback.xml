@@ -3,16 +3,24 @@
 
     <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
         <layout class="ch.qos.logback.classic.PatternLayout">
-            <Pattern>[S.O.S] @%-20thread %-5level %logger{36} - %msg%n</Pattern>
+            <Pattern>[STATICLET] %-20thread %-5level %logger{36} - %msg%n</Pattern>
         </layout>
     </appender>
 
-    <root level="info">
+    <root level="warn">
         <appender-ref ref="stdout" />
     </root>
 
-    <logger name="org.codeartisans" level="trace"/>
-    
-    <logger name="org.qi4j.library.http.staticlet" level="trace"/>
+    <!-- qi4j-lib-staticlet -->
+    <logger name="org.qi4j.library.staticlet" level="trace"/>
+
+    <!-- staticlet -->
+    <logger name="org.codeartisans.staticlet" level="trace"/>
+
+     <!-- ### TODO Find the Qi4j core main logger name ### -->
+    <logger name="Qi4j" level="trace"/>
+
+    <!-- Unit test servlet container : Jetty -->
+    <logger name="org.mortbay.log" level="warn"/>
 
 </configuration>

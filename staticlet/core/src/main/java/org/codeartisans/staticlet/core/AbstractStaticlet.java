@@ -11,7 +11,7 @@
  * limitations under the License.
  *
  */
-package org.codeartisans.staticlet;
+package org.codeartisans.staticlet.core;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,10 +23,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.codeartisans.staticlet.http.etag.ETagger;
-import org.codeartisans.staticlet.util.RequestLogger;
-import org.codeartisans.staticlet.http.etag.HexMD5ETagger;
-import org.codeartisans.staticlet.util.IOService;
+import org.codeartisans.staticlet.core.http.etag.ETagger;
+import org.codeartisans.staticlet.core.http.etag.HexMD5ETagger;
+import org.codeartisans.staticlet.core.util.IOService;
+import org.codeartisans.staticlet.core.util.RequestLogger;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,33 +34,43 @@ import org.slf4j.LoggerFactory;
 /**
  * A servlet implementing GET & HEAD for HTTP/1.0 & HTTP/1.1 on top of a filesystem.
  */
-public class Staticlet
+public abstract class AbstractStaticlet
         extends HttpServlet
 {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger LOGGER = LoggerFactory.getLogger( Staticlet.class );
+    private static final Logger LOGGER = LoggerFactory.getLogger( AbstractStaticlet.class.getPackage().getName() );
     private StaticletConfiguration configuration;
 
+    // Subclasses contract ---------------------------------------------------------------------------------------------
+    /**
+     * @return The StaticletConfiguration to use
+     */
+    protected abstract StaticletConfiguration getConfiguration();
+
+    /**
+     * By default the org.codeartisans.staticlet.core logger is used for
+     * requests logging. You can override this method to provide a logger of your choice.
+     *
+     * @return The Logger to use for requests logging
+     */
+    protected Logger getLogger()
+    {
+        return LOGGER;
+    }
+
+    // Lifecycle -------------------------------------------------------------------------------------------------------
+    /**
+     * WARNING if you override this method remember to call super.destroy().
+     */
     @Override
     public void init()
             throws ServletException
     {
-        String docRootString = getInitParameter( "docRoot" );
-        String directoryListingString = getInitParameter( "directoryListing" );
-        String bufferSizeString = getInitParameter( "bufferSize" );
-        String expireTimeString = getInitParameter( "expireTime" );
-        boolean bufferSizePresent = bufferSizeString != null && bufferSizeString.length() > 0;
-        boolean expireTimePresent = expireTimeString != null && expireTimeString.length() > 0;
-        initStaticlet( docRootString,
-                       Boolean.valueOf( directoryListingString ),
-                       bufferSizePresent ? Integer.parseInt( bufferSizeString ) : null,
-                       expireTimePresent ? Long.parseLong( expireTimeString ) : null );
-    }
-
-    protected final void initStaticlet( String docRoot, Boolean directoryListing, Integer bufferSize, Long expireTime )
-            throws ServletException
-    {
+        beforeInit();
+        super.init();
+        StaticletConfiguration config = getConfiguration();
+        String docRoot = config.getDocRoot();
         if ( docRoot == null || docRoot.length() <= 0 ) {
             throw new ServletException( "docRoot is required" );
         }
@@ -72,24 +82,61 @@ public class Staticlet
         } else if ( !path.canRead() ) {
             throw new ServletException( "'" + docRoot + "' is not readable" );
         }
+        Boolean directoryListing = config.isDirectoryListing();
         if ( directoryListing == null ) {
             directoryListing = Boolean.FALSE;
         }
+        Integer bufferSize = config.getBufferSize();
         if ( bufferSize == null ) {
             bufferSize = 10240; // ..bytes = 10KB.
         }
+        Long expireTime = config.getExpireTime();
         if ( expireTime == null ) {
             expireTime = 604800000L; // ..ms = 1 week.
         }
-        configuration = new StaticletConfiguration( docRoot, directoryListing, bufferSize, expireTime );
+        this.configuration = new StaticletConfiguration( docRoot, directoryListing, bufferSize, expireTime );
+        afterInit();
     }
 
+    /**
+     * WARNING if you override this method remember to call super.destroy().
+     */
     @Override
     public void destroy()
     {
+        beforeDestroy();
+        configuration = null;
         super.destroy();
     }
 
+    /**
+     * Hook called before servlet init.
+     *
+     * @throws ServletException
+     */
+    protected void beforeInit()
+            throws ServletException
+    {
+    }
+
+    /**
+     * Hook called after servlet init.
+     *
+     * @throws ServletException
+     */
+    protected void afterInit()
+            throws ServletException
+    {
+    }
+
+    /**
+     * Hook called before servlet destroy.
+     */
+    protected void beforeDestroy()
+    {
+    }
+
+    // Request processing ----------------------------------------------------------------------------------------------
     @Override
     protected final void doHead( HttpServletRequest httpRequest, HttpServletResponse httpResponse )
             throws ServletException, IOException
@@ -108,9 +155,16 @@ public class Staticlet
             throws IOException
     {
 
-        Logger logger = new RequestLogger( LOGGER, UUID.randomUUID().toString() );
+        Logger logger = new RequestLogger( getLogger(), UUID.randomUUID().toString() );
 
         try {
+
+            // Ensure configuration ------------------------------------------------------------------------------------
+
+            if ( configuration == null ) {
+                logger.error( "Improperly configured, see logs outputed during servlet init, 500" );
+                throw new EarlyHttpStatusException( HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Improperly configured" );
+            }
 
             // Set up FileSystemRequest and its dependencies -----------------------------------------------------------
 

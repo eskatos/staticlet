@@ -11,7 +11,7 @@
  * limitations under the License.
  *
  */
-package org.codeartisans.staticlet;
+package org.codeartisans.staticlet.core;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -23,9 +23,9 @@ import java.util.zip.GZIPOutputStream;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import org.codeartisans.staticlet.http.HttpHeaders;
-import org.codeartisans.staticlet.http.HttpVersion;
-import org.codeartisans.staticlet.util.IOService;
+import org.codeartisans.staticlet.core.http.HttpHeaders;
+import org.codeartisans.staticlet.core.http.HttpVersion;
+import org.codeartisans.staticlet.core.util.IOService;
 
 import org.slf4j.Logger;
 

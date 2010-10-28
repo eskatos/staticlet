@@ -11,28 +11,15 @@
  * limitations under the License.
  *
  */
-package org.codeartisans.staticlet.http.etag;
+package org.codeartisans.staticlet.core.http.etag;
 
 import java.io.File;
+import java.io.IOException;
 
-/**
- * Produces ETag with "name + length + lastModified" for files, "name + lastModified" for directories.
- */
-public class SimpleETagger
-        extends AbstractETagger
-        implements ETagger
+public interface ETagger
 {
 
-    @Override
-    protected String eTagOfFile( File file )
-    {
-        return file.getName() + "__" + file.length() + "__" + file.lastModified();
-    }
-
-    @Override
-    protected String eTagOfDirectory( File directory )
-    {
-        return directory.getName() + "__" + directory.lastModified();
-    }
+    String tagFile( File file )
+            throws IOException;
 
 }

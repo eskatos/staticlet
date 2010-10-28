@@ -11,7 +11,7 @@
  * limitations under the License.
  *
  */
-package org.codeartisans.staticlet;
+package org.codeartisans.staticlet.core;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,11 +20,11 @@ import java.net.URLDecoder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.codeartisans.staticlet.http.etag.ETagger;
-import org.codeartisans.staticlet.http.etag.ETagMatcher;
-import org.codeartisans.staticlet.http.HttpHeaders;
-import org.codeartisans.staticlet.http.HttpVersion;
-import org.codeartisans.staticlet.util.IOService;
+import org.codeartisans.staticlet.core.http.etag.ETagger;
+import org.codeartisans.staticlet.core.http.etag.ETagMatcher;
+import org.codeartisans.staticlet.core.http.HttpHeaders;
+import org.codeartisans.staticlet.core.http.HttpVersion;
+import org.codeartisans.staticlet.core.util.IOService;
 
 import org.slf4j.Logger;
 

@@ -34,7 +34,7 @@ staticlet is available on maven central, add the following to your pom:
 
         <dependency>
             <groupId>org.codeartisans.staticlet</groupId>
-            <artifactId>staticlet</artifactId>
+            <artifactId>staticlet-classic</artifactId>
             <version>1.0</version>
         </dependency>
 
@@ -84,13 +84,8 @@ issues using staticlet, don't hesitate to create a github issue here.
 TODO
 ----
 
- * Projects
- * - Split staticlet in submodules:
- *   - staticlet-core
- *   - staticlet-classic
- *   - staticlet-testsupport
- * - Make qi4j-lib-staticlet depends on staticlet-core
  * Unit tests
+ * - factor test code and ressources in staticlet-testsupport si staticlet-classic and qi4j-lib-staticlet can be tested automagically
  * - implements tests for HTTP/1.0 & HTTP/1.1
  * - rebuild staticlet-docroot.zip with random data so we can make byte level comparisons in client for ranges
  * Various

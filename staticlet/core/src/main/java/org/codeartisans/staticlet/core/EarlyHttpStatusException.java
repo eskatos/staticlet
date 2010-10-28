@@ -11,15 +11,27 @@
  * limitations under the License.
  *
  */
-package org.codeartisans.staticlet.http.etag;
+package org.codeartisans.staticlet.core;
 
-import java.io.File;
-import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
-public interface ETagger
+/**
+ * Raised to abort the request interaction returning only a status and some headers.
+ */
+public class EarlyHttpStatusException
+        extends Exception
 {
 
-    String tagFile( File file )
-            throws IOException;
+    private static final long serialVersionUID = 1L;
+    final String reason;
+    final int status;
+    final Map<String, String> headers = new HashMap<String, String>();
+
+    public EarlyHttpStatusException( int status, String reason )
+    {
+        this.status = status;
+        this.reason = reason;
+    }
 
 }
