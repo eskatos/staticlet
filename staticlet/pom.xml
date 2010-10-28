@@ -15,6 +15,29 @@
     <name>${project.artifactId}</name>
     <packaging>pom</packaging>
 
+    <licenses>
+        <license>
+            <name>Apache License v2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <url>scm:git:git@github.com:eskatos/staticlet.git</url>
+        <connection>scm:git:git@github.com:eskatos/staticlet.git</connection>
+        <developerConnection>scm:git:git@github.com:eskatos/staticlet.git</developerConnection>
+    </scm>
+
+    <developers>
+        <developer>
+            <id>paul@nosphere.org</id>
+            <name>Paul Merlin</name>
+            <email>paul@nosphere.org</email>
+            <timezone>CET</timezone>
+        </developer>
+    </developers>
+
     <properties>
         <version.slf4j>1.6.0</version.slf4j>
         <version.servlet>2.5</version.servlet>
@@ -25,5 +48,6 @@
         <module>core</module>
         <module>classic</module>
     </modules>
+
     
 </project>
