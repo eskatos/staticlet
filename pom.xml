@@ -4,7 +4,9 @@
 
     <groupId>org.codeartisans.staticlet</groupId>
     <artifactId>staticlet-build-pom</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0-SNAPSHOT</version>
+
+    <!-- This pom is not released and will be removed once qi4j-lib-staticlet goes into Qi4j libraries -->
 
     <name>${project.artifactId}</name>
     <packaging>pom</packaging>
