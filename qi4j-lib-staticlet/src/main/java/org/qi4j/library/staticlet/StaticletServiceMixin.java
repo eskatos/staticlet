@@ -34,6 +34,8 @@ public class StaticletServiceMixin
     {
         String docRoot = configuration.docRoot().get();
         Boolean directoryListing = configuration.directoryListing().get();
+        Integer bufferSize = configuration.bufferSize().get();
+        Long expireTime = configuration.expireTime().get();
 
         if ( true ) {
             System.out.println( "/!\\ /!\\ WARN WARN WARN /!\\ /!\\ FIXME ! Qi4j configuration is flawed, need some code I haven't with me ..." );
@@ -41,7 +43,7 @@ public class StaticletServiceMixin
             directoryListing = true;
         }
 
-        initStaticlet( docRoot, directoryListing, null, null );
+        initStaticlet( docRoot, directoryListing, bufferSize, expireTime );
     }
 
 }
