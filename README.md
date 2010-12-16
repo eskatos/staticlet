@@ -82,12 +82,8 @@ issues using staticlet, don't hesitate to create a github issue here.
 TODO
 ----
 
-Projects
- - depend on Qi4j 1.2
- - raise slf4j & logback used version
- - remove slf4j-api dependency from qi4j-lib-staticlet
 Unit tests
- - factor test code and ressources in staticlet-testsupport si staticlet-classic and qi4j-lib-staticlet can be tested automagically
+ - factor test code and ressources in staticlet-testsupport so staticlet-classic and qi4j-lib-staticlet can be tested automagically
  - implements tests for HTTP/1.0 & HTTP/1.1
  - rebuild staticlet-docroot.zip with random data so we can make byte level comparisons in client for ranges
 Various
