@@ -1,0 +1,18 @@
+Staticlet, a servlet for serving files restfully according to HTTP/1.0 & HTTP/1.1
+Copyright 2010, The Codeartisans Development Team of individuals.
+
+See https://github.com/organizations/Codeartisans for list of of individuals.
+Also see each file for additional information of Copyright claims.
+
+Staticlet is a community aggregated works under Copyright law.
+All parts of the original works in Staticlet is licensed under the
+Apache License ver 2.0 http://www.apache.org/licenses
+
+Below follows a list of binary dependencies and their licenses;
+----------------------------------------------------------------
+
+This module uses SLF4J, software developed at http://www.slf4j.org/.
+See http://www.slf4j.org/license.html
+
+
+END OF NOTICE
