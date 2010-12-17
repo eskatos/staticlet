@@ -13,10 +13,9 @@
  */
 package org.qi4j.library.staticlet;
 
-import java.io.File;
-
 import org.codeartisans.staticlet.core.AbstractStaticlet;
 
+import org.qi4j.api.configuration.Configuration;
 import org.qi4j.api.injection.scope.This;
 
 import org.slf4j.Logger;
@@ -29,7 +28,7 @@ public class StaticletServiceMixin
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = LoggerFactory.getLogger( StaticletServiceMixin.class );
     @This
-    private StaticletConfiguration configuration;
+    private Configuration<StaticletConfiguration> configRef;
 
     public StaticletServiceMixin()
     {
@@ -45,17 +44,11 @@ public class StaticletServiceMixin
     @Override
     protected org.codeartisans.staticlet.core.StaticletConfiguration getConfiguration()
     {
+        StaticletConfiguration configuration = configRef.configuration();
         String docRoot = configuration.docRoot().get();
         Boolean directoryListing = configuration.directoryListing().get();
         Integer bufferSize = configuration.bufferSize().get();
         Long expireTime = configuration.expireTime().get();
-
-        if ( true ) {
-            System.out.println( "/!\\ /!\\ WARN WARN WARN /!\\ /!\\ FIXME ! Qi4j configuration is flawed, need some code I haven't with me ..." );
-            docRoot = System.getProperty( "buildDirectory" ) + File.separator + "staticlet-docroot";
-            directoryListing = true;
-        }
-
         return new org.codeartisans.staticlet.core.StaticletConfiguration( docRoot, directoryListing, bufferSize, expireTime );
     }
 

@@ -116,9 +116,3 @@ Caching
     - on disk: path, ttl, emptyOnStart
  - provide a way to empty cache at runtime (file presence and lastModified polling ?)
 
-Qi4j
-
- - see why Configuration defaults values at assembly don't work
- - provide two ways to configure: web.xml or qi4j configuration
-
-
