@@ -43,7 +43,7 @@ public class StaticletServiceTest
 {
 
     private static final Logger LOGGER = LoggerFactory.getLogger( StaticletServiceTest.class );
-    private static final int DEFAULT_PORT = 8080;
+    private static final int DEFAULT_PORT = 8888;
     private static File docRoot;
 
     @BeforeClass
