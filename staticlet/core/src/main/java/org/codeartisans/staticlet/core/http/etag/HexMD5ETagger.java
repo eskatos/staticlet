@@ -67,6 +67,7 @@ public class HexMD5ETagger
         return hexMD5( new ByteArrayInputStream( data.getBytes( "UTF-8" ) ) );
     }
 
+    @SuppressWarnings( "NestedAssignment" )
     private String hexMD5( InputStream data )
             throws IOException
     {

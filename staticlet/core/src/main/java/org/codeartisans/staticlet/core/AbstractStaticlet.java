@@ -40,6 +40,8 @@ public abstract class AbstractStaticlet
 
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = LoggerFactory.getLogger( AbstractStaticlet.class.getPackage().getName() );
+    private static final int DEFAULT_BUFFER_SIZE = 10240; // ..bytes = 10KB.
+    private static final long DEFAULT_EXPIRE_TIME = 604800000L; // ..ms = 1 week.
     private StaticletConfiguration configuration;
 
     // Subclasses contract ---------------------------------------------------------------------------------------------
@@ -102,20 +104,17 @@ public abstract class AbstractStaticlet
         }
         Integer bufferSize = config.getBufferSize();
         if ( bufferSize == null ) {
-            bufferSize = 10240; // ..bytes = 10KB.
+            bufferSize = DEFAULT_BUFFER_SIZE;
         }
         Long expireTime = config.getExpireTime();
         if ( expireTime == null ) {
-            expireTime = 604800000L; // ..ms = 1 week.
+            expireTime = DEFAULT_EXPIRE_TIME;
         }
         this.configuration = new StaticletConfiguration( docRoot, directoryListing, bufferSize, expireTime );
     }
 
-    /**
-     * WARNING if you override this method remember to call super.destroy().
-     */
     @Override
-    public void destroy()
+    public final void destroy()
     {
         beforeDestroy();
         configuration = null;

@@ -28,6 +28,7 @@ import org.codeartisans.staticlet.core.util.IOService;
 
 import org.slf4j.Logger;
 
+@SuppressWarnings( "PackageVisibleField" )
 public class StaticRequest
 {
 
@@ -63,7 +64,6 @@ public class StaticRequest
         this.writeBody = writeBody;
     }
 
-    @SuppressWarnings( "LocalVariableHidesMemberVariable" )
     StaticRequest validateRequest()
             throws EarlyHttpStatusException, UnsupportedEncodingException, IOException
     {
@@ -84,23 +84,23 @@ public class StaticRequest
             requestPathInfo = "/";
         }
 
-        File file = new File( configuration.getDocRoot(), URLDecoder.decode( requestPathInfo, "UTF-8" ) );
-        if ( file.getName().startsWith( "." ) ) {
-            logger.debug( "Requested path {}, leads to a hidden file {}, have'nt checked if it exists, 404", requestPathInfo, file );
+        File requestedFile = new File( configuration.getDocRoot(), URLDecoder.decode( requestPathInfo, "UTF-8" ) );
+        if ( requestedFile.getName().startsWith( "." ) ) {
+            logger.debug( "Requested path {}, leads to a hidden file {}, have'nt checked if it exists, 404", requestPathInfo, requestedFile );
             throw new EarlyHttpStatusException( HttpServletResponse.SC_NOT_FOUND, "Requested path does not exists" );
         }
 
-        if ( !file.exists() ) {
-            logger.debug( "Requested path {}, leads to a non existant file {}, 404", requestPathInfo, file );
+        if ( !requestedFile.exists() ) {
+            logger.debug( "Requested path {}, leads to a non existant file {}, 404", requestPathInfo, requestedFile );
             throw new EarlyHttpStatusException( HttpServletResponse.SC_NOT_FOUND, "Requested path does not exists" );
         }
 
-        logger.debug( "Requested uri {} with path {} leads to the file {}", new Object[]{ requestURI, requestPathInfo, file } );
+        logger.debug( "Requested uri {} with path {} leads to the file {}", new Object[]{ requestURI, requestPathInfo, requestedFile } );
 
         this.uri = noTrailingSlash( requestURI );
         this.pathInfo = requestPathInfo;
-        this.file = file;
-        this.entityTag = entityTagger.tagFile( file );
+        this.file = requestedFile;
+        this.entityTag = entityTagger.tagFile( requestedFile );
 
         return this;
     }
@@ -108,12 +108,6 @@ public class StaticRequest
     void handleConditional()
             throws EarlyHttpStatusException
     {
-//        if ( HttpVersion.HTTP_1_0.lessEquals( protocol ) ) {
-//            handleConditionalHttp1_0();
-//        } else {
-//            handleConditionalHttp1_1();
-//        }
-
         switch ( protocol ) {
             case HTTP_1_0:
                 handleConditionalHttp1_0();

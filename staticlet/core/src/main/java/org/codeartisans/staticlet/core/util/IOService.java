@@ -60,6 +60,7 @@ public class IOService
      *
      * @throws IOException  If something fails at I/O level.
      */
+    @SuppressWarnings( "NestedAssignment" )
     public void copy( RandomAccessFile input, OutputStream output,
                       long start, long length, int bufferSize )
             throws IOException
