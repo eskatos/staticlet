@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2010, Paul Merlin. All Rights Reserved.
+ * Copyright (c) 2012, Mo Maison. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -156,7 +157,7 @@ public class FileRepresenter
     private void handleAcceptHeaders()
     {
         // Get content type by file name and set default GZIP support and content disposition.
-        contentType = io.getMimeType( staticRequest.fileName );
+        contentType = io.getMimeType( staticRequest.file.getName() );
 
         // If content type is unknown, then set the default value.
         // For all content types, see: http://www.w3schools.com/media/media_mimeref.asp
@@ -187,7 +188,7 @@ public class FileRepresenter
         staticRequest.httpResponse.reset();
         staticRequest.httpResponse.setBufferSize( configuration.getBufferSize() );
         if ( staticRequest.protocol == HttpVersion.HTTP_1_1 ) {
-            staticRequest.httpResponse.setHeader( HttpHeaders.CONTENT_DISPOSITION, disposition + ";filename=\"" + staticRequest.fileName + "\"" );
+            staticRequest.httpResponse.setHeader( HttpHeaders.CONTENT_DISPOSITION, disposition + ";filename=\"" + staticRequest.file.getName() + "\"" );
             staticRequest.httpResponse.setHeader( HttpHeaders.ACCEPT_RANGES, "bytes" );
             staticRequest.httpResponse.setHeader( HttpHeaders.ETAG, staticRequest.entityTag );
         }

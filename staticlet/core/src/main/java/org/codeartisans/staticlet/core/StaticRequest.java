@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2010, Paul Merlin. All Rights Reserved.
+ * Copyright (c) 2012, Mo Maison. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,7 +48,6 @@ public class StaticRequest
     File file;
     String entityTag;
     long lastModified;
-    String fileName;
     HttpVersion protocol;
 
     StaticRequest( StaticletConfiguration configuration,
@@ -100,6 +100,7 @@ public class StaticRequest
         this.uri = noTrailingSlash( requestURI );
         this.pathInfo = requestPathInfo;
         this.file = requestedFile;
+        this.lastModified = requestedFile.lastModified();
         this.entityTag = entityTagger.tagFile( requestedFile );
 
         return this;

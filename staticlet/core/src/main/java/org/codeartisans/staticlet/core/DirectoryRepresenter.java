@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2010, Paul Merlin. All Rights Reserved.
+ * Copyright (c) 2012, Mo Maison. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,11 +28,11 @@ public class DirectoryRepresenter
     {
 
         private static final String DOC_HEAD = "<html><head><title>{0}</title></head><body>";
-        private static final String BODY_START = "<ul>";
+        private static final String BODY_START = "<ul>\n";
         static final String DIRLIST_HEADER = DOC_HEAD + BODY_START;
         static final String DIRLIST_HEADER_TRACE = DOC_HEAD + "<p><small><strong>trace:</strong> requestPathInfo=\"{1}\" file=\"{2}\"</small></p>" + BODY_START;
-        static final String DIRLIST_DIR = "<li class=\"directory\"><a href=\"{0}\">{1}</a>/</li>";
-        static final String DIRLIST_FILE = "<li class=\"file\"><a href=\"{0}\">{1}</a></li>";
+        static final String DIRLIST_DIR = "<li class=\"directory\"><a href=\"{0}\">{1}</a>/</li>\n";
+        static final String DIRLIST_FILE = "<li class=\"file\"><a href=\"{0}\">{1}</a></li>\n";
         static final String DIRLIST_FOOTER = "</ul></body></html>";
     }
 
@@ -50,9 +51,9 @@ public class DirectoryRepresenter
         Writer out = staticRequest.httpResponse.getWriter();
         if ( log.isTraceEnabled() ) {
             log.warn( "Logger trace level is activated, will output sensitive data to the browser (local file path)" );
-            out.write( MessageFormat.format( HTML.DIRLIST_HEADER_TRACE, staticRequest.fileName, staticRequest.pathInfo, staticRequest.file ) );
+            out.write( MessageFormat.format( HTML.DIRLIST_HEADER_TRACE, staticRequest.file.getName(), staticRequest.pathInfo, staticRequest.file ) );
         } else {
-            out.write( MessageFormat.format( HTML.DIRLIST_HEADER, staticRequest.fileName ) );
+            out.write( MessageFormat.format( HTML.DIRLIST_HEADER, staticRequest.file.getName() ) );
         }
 
         boolean atJailRoot = atJailRoot();
