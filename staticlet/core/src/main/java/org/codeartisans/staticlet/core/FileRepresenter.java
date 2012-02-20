@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.codeartisans.staticlet.core.http.HttpHeaders;
 import org.codeartisans.staticlet.core.http.HttpVersion;
+import org.codeartisans.staticlet.core.util.EscapeUtils;
 import org.codeartisans.staticlet.core.util.IOService;
 
 import org.slf4j.Logger;
@@ -188,7 +189,11 @@ public class FileRepresenter
         staticRequest.httpResponse.reset();
         staticRequest.httpResponse.setBufferSize( configuration.getBufferSize() );
         if ( staticRequest.protocol == HttpVersion.HTTP_1_1 ) {
-            staticRequest.httpResponse.setHeader( HttpHeaders.CONTENT_DISPOSITION, disposition + ";filename=\"" + staticRequest.file.getName() + "\"" );
+            // cf. Rfc6266 :
+            staticRequest.httpResponse.setHeader( HttpHeaders.CONTENT_DISPOSITION,
+                                                  disposition + "; filename*=UTF-8''" + EscapeUtils.encodeUrlPath( staticRequest.file.getName() ) );
+            // This would also work :
+            // staticRequest.httpResponse.setHeader( HttpHeaders.CONTENT_DISPOSITION, disposition );
             staticRequest.httpResponse.setHeader( HttpHeaders.ACCEPT_RANGES, "bytes" );
             staticRequest.httpResponse.setHeader( HttpHeaders.ETAG, staticRequest.entityTag );
         }

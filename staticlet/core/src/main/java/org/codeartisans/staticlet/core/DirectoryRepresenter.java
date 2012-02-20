@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
 import java.text.MessageFormat;
+import org.codeartisans.staticlet.core.util.EscapeUtils;
 
 import org.slf4j.Logger;
 
@@ -48,12 +49,15 @@ public class DirectoryRepresenter
     void represent()
             throws IOException
     {
+        staticRequest.httpResponse.setContentType( "text/html; charset=UTF-8" );
         Writer out = staticRequest.httpResponse.getWriter();
+        String htmlName = EscapeUtils.encodeHtml( staticRequest.file.getName() );
         if ( log.isTraceEnabled() ) {
             log.warn( "Logger trace level is activated, will output sensitive data to the browser (local file path)" );
-            out.write( MessageFormat.format( HTML.DIRLIST_HEADER_TRACE, staticRequest.file.getName(), staticRequest.pathInfo, staticRequest.file ) );
+            // TODO escape html :
+            out.write( MessageFormat.format( HTML.DIRLIST_HEADER_TRACE, htmlName, staticRequest.pathInfo, staticRequest.file ) );
         } else {
-            out.write( MessageFormat.format( HTML.DIRLIST_HEADER, staticRequest.file.getName() ) );
+            out.write( MessageFormat.format( HTML.DIRLIST_HEADER, htmlName ) );
         }
 
         boolean atJailRoot = atJailRoot();
@@ -64,10 +68,12 @@ public class DirectoryRepresenter
 
         for ( File eachFile : staticRequest.file.listFiles() ) {
 
+            String urlPath = EscapeUtils.encodeUrlPath( eachFile.getName() );
+            htmlName = EscapeUtils.encodeHtml( eachFile.getName() );
             if ( eachFile.isDirectory() ) {
-                out.write( MessageFormat.format( HTML.DIRLIST_DIR, staticRequest.uri + "/" + eachFile.getName(), eachFile.getName() ) );
+                out.write( MessageFormat.format( HTML.DIRLIST_DIR, staticRequest.uri + "/" + urlPath, htmlName ) );
             } else {
-                out.write( MessageFormat.format( HTML.DIRLIST_FILE, staticRequest.uri + "/" + eachFile.getName(), eachFile.getName() ) );
+                out.write( MessageFormat.format( HTML.DIRLIST_FILE, staticRequest.uri + "/" + urlPath, htmlName ) );
             }
         }
 
