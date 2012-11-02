@@ -1,0 +1,155 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Staticlet by eskatos</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Staticlet</h1>
+        <p>A servlet for serving files restfully according to HTTP/1.0 &amp; HTTP/1.1</p>
+
+        <p class="view"><a href="https://github.com/eskatos/staticlet">View the Project on GitHub <small>eskatos/staticlet</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/eskatos/staticlet/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/eskatos/staticlet/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/eskatos/staticlet">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>staticlet</h1>
+
+<h2>What staticlet is</h2>
+
+<p>Staticlet is a servlet for serving files restfully according to HTTP/1.0 &amp; HTTP/1.1
+supporting only the GET &amp; HEAD methods. In other words, it expose a filesystem tree as
+read only resources. It is a quite small and has only one dependency.</p>
+
+<h2>What staticlet do ...</h2>
+
+<p>... good</p>
+
+<ul>
+<li>HTTP/1.0 (strict) and HTTP/1.1 conditional GET &amp; HEAD support</li>
+<li>HTTP/1.1 ranges support (mostly as in the BalusC FileServlet)</li>
+<li>Pluggable ETag generation, several implementations provided</li>
+</ul><p>... not so good</p>
+
+<ul>
+<li>Hide files starting with a '.'</li>
+<li>Simple directory listing support (in memory &amp; not conditional &amp; no html cache : naive &amp; ineficient ... IOW useless for now)</li>
+</ul><h2>Quickstart</h2>
+
+<p>WARNING! No released version yet, you'll have to clone and build it locally.</p>
+
+<p>You'll need maven or an ide supporting it to easily build staticlet.</p>
+
+<p>staticlet is split in modules:</p>
+
+<ul>
+<li>staticlet-core            Most of the code is here</li>
+<li>staticlet-testsupport     Test code &amp; resources</li>
+<li>staticlet-classic         Depend on this one to use the Staticlet servlet configured via init-params</li>
+</ul><p>staticlet has only slf4j-api as dependency for logging, choose your implementation.</p>
+
+<h2>Configuration</h2>
+
+<p>Initial parameters:</p>
+
+<pre><code>docRoot             String      Path to the staticlet servlet docroot
+                                Mandatory
+directoryListing    Boolean     Is directory listing enabled ?
+                                Optionnal, defaults to false
+bufferSize          Integer     Size of the buffer used when streaming data from filesystem to clients Defaults
+                                Optionnal, defaults to false
+expireTime          Long        HttpHeaders.EXPIRES, System.currentTimeMillis() + configuration.getExpireTime()
+                                Optionnal, defaults to one week
+</code></pre>
+
+<h2>Qi4j</h2>
+
+<p>A ServiceComposite with the staticlet servlet as a Mixin is available in the qi4j-lib-staticlet project.
+You'll need to configure it à là Qi4j using the StaticletConfiguration composite.
+No assembly facility yet but it's really simple, look at the unit tests.</p>
+
+<h2>Hacking</h2>
+
+<p>Here are the links to the two HTTP RFCs:</p>
+
+<ul>
+<li>HTTP/1.1 <a href="http://www.ietf.org/rfc/rfc2616">http://www.ietf.org/rfc/rfc2616</a>
+</li>
+<li>HTTP/1.0 <a href="http://www.ietf.org/rfc/rfc1945">http://www.ietf.org/rfc/rfc1945</a>
+</li>
+</ul><p>If you have any question, remark, whatever or found a flaw in the implementation or are having
+issues using staticlet, don't hesitate to create a github issue here.</p>
+
+<h2>TODO</h2>
+
+<p>Unit tests</p>
+
+<ul>
+<li>factor test code and ressources in staticlet-testsupport so staticlet-classic and qi4j-lib-staticlet can be tested automagically</li>
+<li>implements tests for HTTP/1.0 &amp; HTTP/1.1</li>
+<li>rebuild staticlet-docroot.zip with random data so we can make byte level comparisons in client for ranges</li>
+</ul><p>Various</p>
+
+<ul>
+<li>cleanup logging: no info level logging with debug level meaning HTTP protocol level and trace meaning code level</li>
+<li>add support for path overlays (ie. / goes to /storage/root, /mirror goes to /storage/mirrors and /public goes to /storage/var/public)
+hint: need a FileFactory that create java.io.File instances resolving the real path, need to define interface &amp; configuration</li>
+<li>refactor FileRepresenter.processRangeHeaders() to lower code complexity, need unit tests before</li>
+<li>send a 401 when a .nolist file is present in directory (not activated by default)</li>
+<li>send a 404 when a .hidden file is present in path (not activated by default)</li>
+</ul><p>Caching</p>
+
+<ul>
+<li>configuration: write on disk cache data in the live filesystem or in an "overlay" stored elsewhere</li>
+<li>implement cache using the jsr107 api with ehcache</li>
+<li>add a way to bybass gzip compression (path patterns, mime-types) [reminder: mime-types are defined by the container and then in web.xml mime-mapping elements]</li>
+<li>cache gzipped content on disk (path patterns, size limit)</li>
+<li>cache node that hides listing in a Map<ul>
+<li>keep shorter paths only</li>
+<li>configurable TTL of cache entries</li>
+</ul>
+</li>
+<li>cache directory representation
+
+<ul>
+<li>in memory: store in a Map, ttl</li>
+<li>on disk: path, ttl, emptyOnStart</li>
+</ul>
+</li>
+<li>provide a way to empty cache at runtime (file presence and lastModified polling ?)</li>
+</ul>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/eskatos">eskatos</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-36048640-5");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>
