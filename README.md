@@ -2,6 +2,8 @@
 staticlet
 =========
 
+[![Build Status](https://travis-ci.org/eskatos/staticlet.svg)](https://travis-ci.org/eskatos/staticlet)
+
 What staticlet is
 -----------------
 
