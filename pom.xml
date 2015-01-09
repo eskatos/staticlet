@@ -13,7 +13,7 @@
 
     <modules>
         <module>staticlet</module>
-        <module>qi4j-lib-staticlet</module>
+        <!--module>qi4j-lib-staticlet</module-->
     </modules>
 
 </project>
